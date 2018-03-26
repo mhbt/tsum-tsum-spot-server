@@ -1,27 +1,34 @@
-const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
+const itemController = require("../controllers/itemController");
 
 const routes =  (app)=> {
-    /**
-     * Registeration request handlers
-     */
+
     app.route("/register")
-    .post(userController.registerUser);
-
+    .post(authController.register);
     app.route("/login")
-    .post(userController.login);
-    /**
-     * Users request handlers
-     */
+    .post(authController.login);
    app.route("/users")
-   .get(userController.getUsers);
+   .get(authController.getUsers);
+   app.route("/user/:email")
+   .get(authController.getUser)
+   .put(authController.putUser)
+   .delete(authController.deleteUser);
 
-   /**
-     * Specific user by id:  request handlers
-     */
-   app.route("/user/:id")
-   .get(userController.getUser)
-   .put(userController.updateUser)
-   .delete(userController.removeUser);
+
+   app.route("/items")
+   .get(itemController.getItems)
+   .post(itemController.createItem);
+   app.route("/items/active")
+   .get(itemController.getActiveItems);
+   app.route("/items/closed")
+   .get(itemController.getClosedItems);
+   app.route("items/purchased")
+   .get(itemController.getPurchasedItems);
+   app.route("/items/:id")
+   .get(itemController.getItem)
+   .put(itemController.updateItem)
+   .delete(itemController.deleteItem);
+
 }
 
 

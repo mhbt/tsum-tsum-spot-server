@@ -4,18 +4,24 @@ const Schema = mongoose.Schema;
 const addressSchema = new Schema({
     line1:{
         type: String,
+        required: true,
     },
     line2:{
         type: String,
     },
     city:{
         type: String,
+        required: true,
     }, 
+    state:{
+        type: String,
+    },
     zip:{
         type: Number,
     },
     country:{
         type: String,
+        required: true,
     }
 });
 const userSchema = new Schema({
@@ -27,7 +33,7 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    email:{
+    _id:{
         type: String,
         required: true
     },
@@ -47,9 +53,19 @@ const userSchema = new Schema({
         type: String,
         required:true
     },
-    created_at: {
+    created_at:{
+        type: Date,
+        default: Date.now(),
+    },
+    updated_at: {
         type: Date,
         default : Date.now()
+    },
+    paypal:{
+        type: String,
+    },
+    venmo: {
+        type: String
     }
 });
 

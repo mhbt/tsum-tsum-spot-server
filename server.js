@@ -27,20 +27,22 @@ connection.catch(err=>{
  * Middlewares
  */
 app.use((err,req,res,next)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     console.log(req.method + " for " + req.url);
     next();
 });
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(check_jwt({secret: conf["jwt-secret"]}).unless({ path: ["/register", "/login"]}));
+app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login"]}));
 /**
  * Error handling middleware
  */
 app.use((err,req,res,next)=>{
     if(err){
         res.status(401).send({"message": err.message});
-        console.log(req.method + " for " + req.url);
     }
+    console.log(req.method + " for " + req.url);
     next();
 });
 
@@ -55,10 +57,12 @@ routes(app);
 /**
  * Creating Server at some available port
  */
-let server = app.listen(8081 || process.env.port, () => {
+let server = app.listen(8082 || process.env.port, () => {
     debug.log(`Server is listening at http://localhost:${server.address().port}`);
 });
-
+process.on('beforeExit',()=>{
+    mongoose.disconnect();
+});
 
 
 

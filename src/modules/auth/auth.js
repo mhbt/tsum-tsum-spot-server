@@ -2,11 +2,20 @@
  * @module - Authenticate and Register users
  * 
 */
-var jwt = require('jwt');
-var crypto = require("./crypto");
-
- const crypto = require("crypto");
+const crypto = require("./crypto");
+var jwt = require('jsonwebtoken');
  class Auth {
-    constructor(){
+    compare(post,saved){
+        let hash = crypto.getHash(post);
+        let dec = crypto.unsign(saved, post);
+       if ( hash === dec) return true;
+       else return false;
+    }
+    hash(password){
+        return crypto.sign(password);
+    }
+    decodeToken(token){
+       return jwt.decode(token,{complete: true, json: true});
     }
  }
+ module.exports = new Auth();
