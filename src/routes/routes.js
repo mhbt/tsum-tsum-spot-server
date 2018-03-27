@@ -15,15 +15,18 @@ const routes =  (app)=> {
    .delete(authController.deleteUser);
 
 
-   app.route("/items")
+   app.route("/items/")
    .get(itemController.getItems)
    .post(itemController.createItem);
-   app.route("/items/active")
+   app.route("/items/active/")
    .get(itemController.getActiveItems);
-   app.route("/items/closed")
+   app.route("/items/closed/")
    .get(itemController.getClosedItems);
-   app.route("items/purchased")
+   app.route("/items/purchased/")
    .get(itemController.getPurchasedItems);
+   app.route("/items/tobepurchased/")
+   .get(itemController.getItemsToBePurchased);
+
    app.route("/items/:id")
    .get(itemController.getItem)
    .put(itemController.updateItem)

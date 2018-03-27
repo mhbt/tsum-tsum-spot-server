@@ -22,16 +22,9 @@ module.exports.updateItem = function updateItem(req,res){
     if (!update || !id) res.status(400).send({name: 'Update Item', error: "Param missing"});
     Item.findById(req.params.id)
     .then(item=>{
-
-        for(let prop in item){
-            item.prop = 0;
-            // item.prop = !isNullOrUndefined(update.prop) ? update.prop : item.prop;
-        }
-        console.log(item);
-        return Item.findByIdAndUpdate(id, item, {new: true});
+        return Item.findByIdAndUpdate(id, update, {new: true});
     })
     .then(item=>{
-        console.log(item);
         res.status(200).send({name: 'Update Item', payload: item});
     })
     .catch(error=>{
@@ -108,12 +101,17 @@ module.exports.getClosedItems = function getClosedItems (req,res){
 
 module.exports.getPurchasedItems = function getPurchasedItems(req,res){
     Item.find({
-        'stock': {
-            $gte:{
-                'orders': {
-                    $size
-                }
-            }
-        }
+        $where: "this.orders.length <= this.stock"
+    })
+    .then(items=>{
+        res.status(200).send({name:'Get Purchased Items', payload: items});
+    })
+}
+module.exports.getItemsToBePurchased = function getItemsToBePurchased(req,res){
+    Item.find({
+        $where: "this.orders.length > this.stock"
+    })
+    .then(items=>{
+        res.status(200).send({name:'Get Purchased Items', payload: items});
     })
 }
