@@ -1,10 +1,11 @@
 import { Error } from "mongoose";
-
+const util = require("util");
 const conf = require("../conf/conf");
 const mongoose = require("mongoose");
 const userSchema = require("../modals/userModal");
 const auth = require('../modules/auth/auth');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+
 const User = mongoose.model("User", userSchema);
 
 
@@ -13,7 +14,7 @@ module.exports.register = function register(req,res) {
     User.findOne({'_id': user._id})
     .then(data=>{
         if(data === null) return Promise.resolve(user);
-        return Promise.reject(new Error('User already exists'));
+        return Promise.reject(new Error('Pardon Us! Someone registered this email, if that was you, you can login or request a new password'));
     })
     .then(user=>{
         user.password = auth.hash(user.password);
@@ -33,14 +34,14 @@ module.exports.register = function register(req,res) {
 module.exports.login = function login(req,res){
     let credentials = req.body;
     if(!credentials._id || !credentials.password){
-        res.status(404).send({name: 'Login', error: "username and password fields are required"});
+        res.status(404).send({name: 'Login', error: "Error: Email or Password is missing..."});
     }else{
         User.findById(credentials._id)
         .then(user=>{
-            if (user === null) Promise.reject(new Error("48:Username and password miss-matched."));
+            if (util.isNullOrUndefined(user)) return Promise.reject(new Error("Error: Our best bet is that email miss-matched with password!"));
             let success = auth.compare(credentials.password,user.password);
             if(success) return Promise.resolve(user);
-            return Promise.reject('55:Username and password miss-matched.');
+            return Promise.reject(new Error("Error: Our best bet is that email miss-matched with password!"));
         })
         .then(user=>{
             let payload = {
@@ -52,14 +53,14 @@ module.exports.login = function login(req,res){
                     name:"Login", 
                     payload: {
                         token: token,
-                        role: payload.role
+                        user: sanitizeUser(user)
                     }
                 });
             });
         })
         .catch(error=>{
-            console.log(error);
-            res.status(404).send({name: 'Login', error: error.message});
+            console.error(error.message);
+            res.status(200).send({name: 'Login', error: error.message});
         });
     }
 }
@@ -127,7 +128,7 @@ module.exports.deleteUser = function deleteUser(req,res){
 
 function sanitizeUser(user){
     let temp = {
-        email: user._id,
+        _id: user._id,
         firstName : user.firstName,
         lastName : user.lastName,
         address: user.address,

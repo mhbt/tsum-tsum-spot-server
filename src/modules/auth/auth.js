@@ -7,7 +7,12 @@ var jwt = require('jsonwebtoken');
  class Auth {
     compare(post,saved){
         let hash = crypto.getHash(post);
-        let dec = crypto.unsign(saved, post);
+        let dec = null;
+        try{
+             dec = crypto.unsign(saved, post);
+        }catch(error){
+            return false;
+        }
        if ( hash === dec) return true;
        else return false;
     }

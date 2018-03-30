@@ -33,7 +33,11 @@ class Crypto {
         return dec;
     }
     unsign(enc, password){
-        return this.decrypt(enc, this.hash(password,1));
+        try{
+            return this.decrypt(enc, this.hash(password,1));
+        }catch(error){
+            return false;
+        }
     }
     sign(data){
         return this.encrypt(this.hash(data,2), this.hash(data,1));
