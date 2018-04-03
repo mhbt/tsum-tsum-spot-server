@@ -1,5 +1,5 @@
 module.exports = {
-  "debug": true,
+  "debug": false,
   "database": {
     "url-prod": "mongodb://tsum:tCSVSVuAyzwmDnuFEXy7fT8DGpu1xNMq8oXK1DRn2x7OQLIK5l1bICGI1Getc0QwFM3oLkYrtg1fbkNvCcK9cQ%3D%3D@tsum.documents.azure.com:10255/?ssl=true",
     "url": "mongodb://localhost:27017/tsum"

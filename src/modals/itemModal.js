@@ -31,12 +31,10 @@ let itemSchema = new Schema({
         type: String,
     },
     created_at:{
-        type: Date,
-        default: Date.now(),
+        type: Number,
     },
     updated_at:{
-        type:Date,
-        default: Date.now(),
+        type:Number,
     },
     /**
      * @prop bin

@@ -20,7 +20,7 @@ let app = express();
 mongoose.Promise = global.Promise;
 let connection = mongoose.connect(conf.database.url, {});
 connection.catch(err=>{
-    debug.log(err.message);
+    console.log(err.message);
     process.exit(1);
 });
 
@@ -50,8 +50,9 @@ app.use((err,req,res,next)=>{
     console.log(req.method + " for " + req.url);
     next();
 });
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({extended: true,limit: "50mb"}));
+app.use(bodyParser.json({limit: "50mb"}));
 
 
 /**
@@ -65,7 +66,7 @@ routes(app);
  * Creating Server at some available port
  */
 let server = app.listen(8082 || process.env.port, () => {
-    debug.log(`Server is listening at${server.address().address}:${server.address().port}`);
+    console.log(`Server is listening at${server.address().address}:${server.address().port}`);
 });
 process.on('beforeExit',()=>{
     mongoose.disconnect();
