@@ -44,9 +44,12 @@ app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/logi
 app.use((err,req,res,next)=>{
     if(err){
         res.status(401).send({"message": err.message});
+        //sorted the server
     }
+   else{
     console.log(req.method + " for " + req.url);
     next();
+   }
 });
 
 
@@ -60,8 +63,8 @@ routes(app);
 /**
  * Creating Server at some available port
  */
-let server = app.listen(8082 || process.env.port, () => {
-    debug.log(`Server is listening at http://localhost:${server.address().port}`);
+let server = app.listen(process.env.port, () => {
+    debug.log(`Server is listening at${server.address().address}:${server.address().port}`);
 });
 process.on('beforeExit',()=>{
     mongoose.disconnect();

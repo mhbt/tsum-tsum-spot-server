@@ -64,6 +64,7 @@ let itemSchema = new Schema({
      */
     stock :{
         type: Number,
+        default: null
     }
 
 });
