@@ -29,7 +29,7 @@ connection.catch(err=>{
  */
 app.use((err,req,res,next)=>{
     if(err){
-        res.send({"message": err.message});
+        res.status(200).json({"message": err.message});
         //sorted the server
     }
    else{
