@@ -20,7 +20,8 @@ let app = express();
 mongoose.Promise = global.Promise;
 let connection = mongoose.connect(conf.database.url, {});
 connection.catch(err=>{
-    debug.log(err);
+    debug.log(err.message);
+    process.exit(1);
 });
 
 /**

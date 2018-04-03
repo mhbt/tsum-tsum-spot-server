@@ -1,5 +1,5 @@
-import conf from '../conf/conf';
-import fs from 'fs';
+const conf = require('../conf/conf');
+const fs = require('fs');
 module.exports.log = (message)=> {
     if (!conf.debug) return;
     let date = new Date;
