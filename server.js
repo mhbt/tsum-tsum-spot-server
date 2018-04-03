@@ -35,6 +35,7 @@ app.use(function(req, res, next) {
 app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login"]}));
 app.use((err,req,res,next)=>{
     if(err){
+        console.log(err.message);
         res.status(200).json({"message": err.message});
         //sorted the server
     }
@@ -63,7 +64,7 @@ routes(app);
 /**
  * Creating Server at some available port
  */
-let server = app.listen(process.env.port, () => {
+let server = app.listen(8082 || process.env.port, () => {
     debug.log(`Server is listening at${server.address().address}:${server.address().port}`);
 });
 process.on('beforeExit',()=>{
