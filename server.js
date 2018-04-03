@@ -27,6 +27,12 @@ connection.catch(err=>{
 /**
  * Middlewares
  */
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers",  req.header("Access-Control-Request-Headers"));
+    next();
+});
+app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login"]}));
 app.use((err,req,res,next)=>{
     if(err){
         res.status(200).json({"message": err.message});
@@ -37,11 +43,7 @@ app.use((err,req,res,next)=>{
     next();
    }
 });
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers",  req.header("Access-Control-Request-Headers"));
-    next();
-  });
+
 
 app.use((err,req,res,next)=>{
     console.log(req.method + " for " + req.url);
@@ -49,7 +51,6 @@ app.use((err,req,res,next)=>{
 });
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login"]}));
 
 
 /**
