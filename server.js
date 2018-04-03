@@ -44,7 +44,7 @@ app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/logi
  */
 app.use((err,req,res,next)=>{
     if(err){
-        res.status(401).send({"message": err.message});
+        res.send({"message": err.message});
         //sorted the server
     }
    else{
