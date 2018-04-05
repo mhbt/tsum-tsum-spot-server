@@ -10,9 +10,17 @@ const OrderSchema = new Schema({
         type: Number,
         type: required,
     },
+    status: {
+        type: Boolean,
+        default: false,
+    },
     description: {
         type: String,
         required: true,
+    },
+    bin:{
+        type: Boolean,
+        default:false,
     },
     created_at:{
         type: Number,
@@ -21,5 +29,5 @@ const OrderSchema = new Schema({
         type: Number,
     }
 });
-OrderSchema.index({item_ref: 1});
+OrderSchema.index({item_ref: 1, bin: 1});
 module.exports = OrderSchema;

@@ -25,6 +25,10 @@ const InvoiceShema = new Schema({
         type: Boolean,
         default: true,
     },
+    customer_paid: {
+        type: Boolean,
+        default: false,
+    },
     payable: {
         order: {
             type: Number,
@@ -38,6 +42,13 @@ const InvoiceShema = new Schema({
     bin :{
         type: Boolean,
         default: false,
+    },
+    created_at:{
+        type: Number,
+    },
+    updated_at: {
+        type: Number,
     }
 });
 InvoiceShema.index({user_ref: 1});
+moudle.exports = InvoiceShema;

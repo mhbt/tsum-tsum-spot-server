@@ -71,7 +71,7 @@ module.exports.deleteItem = function deleteItem(req,res){
 }
 
 module.exports.getItems = function getItems(req,res){
-    Item.find({})
+    Item.find({'bin': false})
     .then(items=>{
         res.status(200).send({name:'Get Items', payload: items});
     })
@@ -80,7 +80,7 @@ module.exports.getItems = function getItems(req,res){
     })
 }
 module.exports.getActiveItems = function getActiveItems (req,res){
-    Item.find({'status': true})
+    Item.find({'status': true, 'bin':false})
     .then(items=>{
         res.status(200).send({name:'Get Active Items', payload: items});
     })
@@ -89,7 +89,7 @@ module.exports.getActiveItems = function getActiveItems (req,res){
     })
 }
 module.exports.getClosedItems = function getClosedItems (req,res){
-    Item.find({'status': false})
+    Item.find({'status': false, 'bin': false})
     .then(items=>{
         res.status(200).send({name:'Get Closed Items', payload: items});
     })
