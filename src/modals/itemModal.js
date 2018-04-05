@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-let itemSchema = new Schema({
+const ItemSchema = new Schema({
     name : {
         type: String,
         required: true,
@@ -66,5 +66,5 @@ let itemSchema = new Schema({
     }
 
 });
-itemSchema.index({bin: 1, status: 1});
-module.exports = itemSchema;
+ItemSchema.index({bin: 1, status: 1});
+module.exports = ItemSchema;

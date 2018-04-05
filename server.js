@@ -30,6 +30,7 @@ connection.catch(err=>{
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers",  req.header("Access-Control-Request-Headers"));
+    res.header("Access-Control-Allow-Methods","POST, PUT, GET, OPTIONS");
     next();
 });
 app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login"]}));
