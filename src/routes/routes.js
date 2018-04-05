@@ -3,6 +3,8 @@ const itemController = require("../controllers/itemController");
 
 const routes =  (app)=> {
 
+    app.route("/verify")
+    .post(authController.verifyToken);
     app.route("/register")
     .post(authController.register);
     app.route("/login")

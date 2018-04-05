@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Methods","POST, PUT, GET, OPTIONS");
     next();
 });
-app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login"]}));
+app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login", "/verify"]}));
 app.use((err,req,res,next)=>{
     if(err){
         console.log(err.message);

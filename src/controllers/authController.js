@@ -34,26 +34,27 @@ module.exports.register = function register(req,res) {
 module.exports.login = function login(req,res){
     let credentials = req.body;
     if(!credentials._id || !credentials.password){
-        res.status(404).send({name: 'Login', error: "Error: Email or Password is missing..."});
+        res.status(404).send({name: 'Login', error: "Error: Email or Password is missing!"});
     }else{
         User.findById(credentials._id)
         .then(user=>{
-            if (util.isNullOrUndefined(user)) return Promise.reject(new Error("Error: Our best bet is that email miss-matched with password!"));
+            if (util.isNullOrUndefined(user)) return Promise.reject(new Error("Error: Email & password miss-match!"));
             let success = auth.compare(credentials.password,user.password);
             if(success) return Promise.resolve(user);
-            return Promise.reject(new Error("Error: Our best bet is that email miss-matched with password!"));
+            return Promise.reject(new Error("Error: Email & password miss-match!"));
         })
         .then(user=>{
             let payload = {
                 'email': user._id,
-                'role': user.admin ? 'admin' : 'customer',
+                'role': user.admin === true ? 'admin' : 'customer',
             }
             jwt.sign(payload, conf.jwt_secret, {expiresIn: '365d'}, (err, token)=>{
                 if(!err) res.send({
                     name:"Login", 
                     payload: {
                         token: token,
-                        user: sanitizeUser(user)
+                        user: sanitizeUser(user),
+                        role: payload.role
                     }
                 });
             });
@@ -124,7 +125,19 @@ module.exports.deleteUser = function deleteUser(req,res){
         }
       })
 }
-
+module.exports.verifyToken = function verifyToken(req,res){
+    let token = req.body.token ? req.body.token : 'abcde';
+    jwt.verify(token, conf.jwt_secret,(err,data)=>{
+        if(err) {
+            console.log(err.message);
+            res.status(200).send({name: 'Verify Token', error: true});            
+        }
+        if(data) {
+            console.log(data);
+            res.status(200).send({name: 'Verify Token', payload: data});
+        }
+    });
+}
 
 function sanitizeUser(user){
     let temp = {
