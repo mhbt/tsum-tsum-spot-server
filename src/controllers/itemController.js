@@ -1,8 +1,12 @@
 
 const mongoose = require("mongoose");
 const itemSchema = require("../modals/itemModal");
+const orderSchema = require("../modals/orderModal");
+const invoiceSchema = require("../modals/invoiceModal");
 
 const Item = mongoose.model('Item', itemSchema);
+const Order = mongoose.model("Order", orderSchema);
+const Invoice = mongoose.model("Invoice", invoiceSchema);
 module.exports.createItem = function createItem (req,res){
     let post = req.body;
     if (!post) res.status(400).send({name: 'Create Item', error: "Item object is required"});
@@ -71,7 +75,7 @@ module.exports.deleteItem = function deleteItem(req,res){
 }
 
 module.exports.getItems = function getItems(req,res){
-    Item.find({'bin': false})
+    Item.find({'bin': false, 'status': true})
     .then(items=>{
         res.status(200).send({name:'Get Items', payload: items});
     })
@@ -99,18 +103,56 @@ module.exports.getClosedItems = function getClosedItems (req,res){
 }
 
 module.exports.getPurchasedItems = function getPurchasedItems(req,res){
-    Item.find({
-        $where: "this.orders.length <= this.stock"
+    Promise.all([Item.find({}), Invoice.find({})])
+    .then((data)=>{
+        let items = data[0];
+        let invoices = data[1];
+
+    
+      let purchased = items.filter(function (item, index) {
+        let order_count = 0;
+        let invoice = 
+        invoices.forEach(invoice=>{
+            item.orders.forEach(order=>{
+                order_count += invoice.orders.id(order).quantity;
+            });
+          });
+    
+        item.set('unused',item.availablity === 'in-stock' ? order_count <= item.stock ? item.stock - order_count : null : order_count, { strict: false });
+        //   item.to_buy = item.availablity === 'in-stock' ? order_count > item.stock ? order_count - item.stock : null : order_count; 
+          return item.availablity === 'in-stock' ? order_count <= item.stock ? true : false : order_count === 0 ? true : false; 
+          console.log(order_count);
+        });
+        res.send({name: "Get Purchased Items", payload: purchased});
     })
-    .then(items=>{
-        res.status(200).send({name:'Get Purchased Items', payload: items});
-    })
+    .catch(error=>{
+        console.log(error);
+    });
 }
 module.exports.getItemsToBePurchased = function getItemsToBePurchased(req,res){
-    Item.find({
-        $where: "this.orders.length > this.stock"
+    Promise.all([Item.find({}), Invoice.find({})])
+    .then((data)=>{
+        let items = data[0];
+        let invoices = data[1];
+
+    
+      let purchased = items.filter(function (item, index) {
+        let order_count = 0;
+        let invoice = 
+        invoices.forEach(invoice=>{
+            item.orders.forEach(order=>{
+                order_count += invoice.orders.id(order).quantity;
+            });
+          });
+    
+        item.set('to_buy',item.availablity === 'in-stock' ? order_count > item.stock ? order_count - item.stock : null: order_count, { strict: false });
+        //   item.to_buy = item.availablity === 'in-stock' ? order_count > item.stock ? order_count - item.stock : null : order_count; 
+          return item.availablity === 'in-stock' ? order_count > item.stock ? true : false : true; 
+          console.log(order_count);
+        });
+        res.send({name: "Get Purchased Items", payload: purchased});
     })
-    .then(items=>{
-        res.status(200).send({name:'Get Purchased Items', payload: items});
-    })
+    .catch(error=>{
+        console.log(error);
+    });
 }

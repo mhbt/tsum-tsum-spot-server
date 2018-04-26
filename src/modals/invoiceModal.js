@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const orderSchema = require("./orderModal");
 const Schema = mongoose.Schema;
 const InvoiceShema = new Schema({
     user_ref: { //Reference to the user
@@ -6,11 +7,11 @@ const InvoiceShema = new Schema({
         required: true,
     },
     orders: {
-        type: Array,
+        type: [ {type: orderSchema}]
     },
     /**
      * @prop status 
-     * @description stage1--pending | stage2--ready | stage3--paid | stage4--shipped | stage5--completed
+     * @description stage1--pending  | stage3--paid | stage2--ready | stage4--shipped | stage5--completed
      */
     stage: {
         type: Number,
@@ -51,4 +52,4 @@ const InvoiceShema = new Schema({
     }
 });
 InvoiceShema.index({user_ref: 1});
-moudle.exports = InvoiceShema;
+module.exports = InvoiceShema;

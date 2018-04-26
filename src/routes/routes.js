@@ -1,5 +1,6 @@
 const authController = require("../controllers/authController");
 const itemController = require("../controllers/itemController");
+const orderController =  require("../controllers/orderController");
 
 const routes =  (app)=> {
 
@@ -33,6 +34,18 @@ const routes =  (app)=> {
    .get(itemController.getItem)
    .put(itemController.updateItem)
    .delete(itemController.deleteItem);
+
+   app.route("/invoice/")
+   .post(orderController.createInvoice)
+   .put(orderController.updateInvoice);
+   app.route("/invoice/:user_ref")
+   .get(orderController.getInvoice);
+
+   app.route("/invoice/order")
+   .post(orderController.addOrder)
+   .put(orderController.updateOrder);
+   app.route("/invoice/order/:user_ref/:order_id")
+   .delete(orderController.removeOrder);
 
 }
 

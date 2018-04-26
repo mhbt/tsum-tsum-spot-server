@@ -30,7 +30,7 @@ connection.catch(err=>{
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers",  req.header("Access-Control-Request-Headers"));
-    res.header("Access-Control-Allow-Methods","POST, PUT, GET, OPTIONS");
+    res.header("Access-Control-Allow-Methods","POST, PUT, GET, OPTIONS, DELETE");
     next();
 });
 app.use(check_jwt({secret: conf.jwt_secret}).unless({ path: ["/register", "/login", "/verify"]}));
@@ -67,7 +67,7 @@ routes(app);
  * Creating Server at some available port
  */
 let server = app.listen(8082 || process.env.port, () => {
-    console.log(`Server is listening at${server.address().address}:${server.address().port}`);
+    console.log(`Server is listening at${server.address().family}:${server.address().port}`);
 });
 process.on('beforeExit',()=>{
     mongoose.disconnect();

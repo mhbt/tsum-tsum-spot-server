@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 const OrderSchema = new Schema({
     item_ref: { // Reference to the item
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true,
     },
     quantity: { 
         type: Number,
-        type: required,
+        default: 1,
     },
     status: {
         type: Boolean,
