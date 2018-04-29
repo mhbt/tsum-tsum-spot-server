@@ -35,7 +35,12 @@ const routes =  (app)=> {
    .put(itemController.updateItem)
    .delete(itemController.deleteItem);
 
+
+
+   app.route("/invoices/:stage")
+   .get(orderController.getAllInvoices);
    app.route("/invoice/")
+//    .get(orderController.getAllInvoices)
    .post(orderController.createInvoice)
    .put(orderController.updateInvoice);
    app.route("/invoice/:user_ref")

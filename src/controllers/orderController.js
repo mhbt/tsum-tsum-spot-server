@@ -163,4 +163,18 @@ module.exports.removeOrder = function removeOrder(req,res){
         res.send({name: "Remove Order", error: "User reference or Order Id not found"});
     }
 }
+module.exports.getAllInvoices= function getAllInvoices(req,res){
+    let stage = +req.params.stage;
+    // console.log(stage);
+    if(!stage) {res.send({name:"Get All Invoices", error: "Param Missing"})}
 
+    Invoice.find({bin: false, stage: stage})
+    .then(invoices=>{
+        // console.log(invoices);
+        res.send({name: 'Get All Invoices', payload: invoices});
+    })
+    .catch(error=>{
+        console.log(error.message);
+        res.send({name: 'Get All Invoices', error: error.message});
+    });
+}

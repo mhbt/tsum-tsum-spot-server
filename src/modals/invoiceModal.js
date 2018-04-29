@@ -51,5 +51,5 @@ const InvoiceShema = new Schema({
         type: Number,
     }
 });
-InvoiceShema.index({user_ref: 1});
+InvoiceShema.index({user_ref: 1, stage: 1});
 module.exports = InvoiceShema;

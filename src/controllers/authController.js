@@ -103,7 +103,7 @@ module.exports.getUser = function getUser(req,res){
     
     User.findById(req.params.email, (error, user)=>{
         if (error) res.send({name:"Get User", error: error.message});
-        else res.status(302).json(sanitizeUser(user));
+        else res.status(200).json(sanitizeUser(user));
     });
 }
 module.exports.deleteUser = function deleteUser(req,res){
