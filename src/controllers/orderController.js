@@ -10,7 +10,7 @@ const Invoice = mongoose.model("Invoice", invoiceSchema);
 module.exports.getInvoice = function getInvoice(req,res){
     let user_ref= req.params.user_ref;
     console.log(user_ref);
-    Invoice.findOne({'user_ref': user_ref})
+    Invoice.findOne({'user_ref': user_ref, 'bin': false})
     .then(invoice=>{
         res.send({name: 'Get invoice', payload: invoice});
     })
