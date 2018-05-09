@@ -2,7 +2,7 @@
   "name": "tsum-tsum-spot-server",
   "version": "0.0.0",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "description": "tsum-tsum-spot-server",
   "main": "server.js",

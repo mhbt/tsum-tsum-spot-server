@@ -62,9 +62,12 @@ const ItemSchema = new Schema({
      */
     stock :{
         type: Number,
-        default: null
+        default: null,
+    },
+    leased: {
+        type: Number,
+        default: null,
     }
-
 });
 ItemSchema.index({bin: 1, status: 1});
 module.exports = ItemSchema;
