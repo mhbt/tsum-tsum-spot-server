@@ -66,7 +66,7 @@ const ItemSchema = new Schema({
     },
     leased: {
         type: Number,
-        default: null,
+        default: 0,
     }
 });
 ItemSchema.index({bin: 1, status: 1});

@@ -54,7 +54,8 @@ module.exports.createInvoice = function createInvoice(req, res) {
                 return Invoice.create(invoice);
             })
             .then((invoice)=>{
-                return Promise.all([Promise.resolve(invoice),Item.findByIdAndUpdate(invoice.orders[0].item_ref, {"$push": {"orders": invoice.orders[0]._id}})]);
+                console.log(`incremented orders by ${invoice.orders[0].quantity}`);
+                return Promise.all([Promise.resolve(invoice),Item.findByIdAndUpdate(invoice.orders[0].item_ref, {"$inc": {"leased": invoice.orders[0].quantity}, "$push": {"orders": invoice.orders[0]._id}})]);
             })
             .then(data =>{
                 res.send({name:'Create Invoice', payload: data[0]});
@@ -98,7 +99,7 @@ module.exports.addOrder = function addOrder(req,res){
             let orderId = invoice.orders[invoice.orders.length - 1]._id;
             let item_ref = invoice.orders[invoice.orders.length - 1].item_ref;
             console.log(orderId,item_ref);
-            return Promise.all([Promise.resolve(invoice), Item.findByIdAndUpdate(item_ref,{"$push":{"orders": orderId}},{new: true})]);
+            return Promise.all([Promise.resolve(invoice), Item.findByIdAndUpdate(item_ref,{"$inc": {"leased": invoice.orders[invoice.orders.length - 1].quantity},"$push":{"orders": orderId}},{new: true})]);
         })
         .then(data=>{
             // console.log(data[0], data[1]);
@@ -120,7 +121,8 @@ module.exports.updateOrder = function updateOrder(req,res){
     Invoice.findOne({"user_ref": req.body.user_ref, "bin": false})
     .then(invoice=>{
         let id = invoice._id;
-        let order = invoice.orders.id(req.body.order_id); 
+        let order = invoice.orders.id(req.body.order_id);
+        let old_qty = order.quantity;
         let update = req.body.order;
         for(prop in update){ //accessed by
             if(prop === 'created_at' || prop === '_id') continue;
@@ -128,10 +130,19 @@ module.exports.updateOrder = function updateOrder(req,res){
             order[prop] = req.body.order[prop];
         }
         invoice.save();
-       return Promise.resolve({name: "Update Order", payload: invoice});
+        if(old_qty !== order.quantity){
+            if(old_qty > order.quantity){
+                console.log("Executed old_qty > order.quanitity");
+                return Promise.all([Item.findOneAndUpdate({_id: order.item_ref}, {"$inc": {"leased" : -(old_qty - order.quantity)}}), Promise.resolve(invoice)]);
+            }else if(old_qty < order.quantity){
+                console.log("Executed old_qty < order.quanitity");                
+                return Promise.all([Item.findOneAndUpdate({_id: order.item_ref}, {"$inc": {"leased" :  order.quantity - old_qty }}), Promise.resolve(invoice)]);                
+            }
+        }
+       return Promise.all([Promise.resolve(false), Promise.resolve(invoice)]);
     })
-    .then(invoice=>{
-        res.send(invoice);
+    .then(data=>{
+        res.send({name: "Update Order", payload: data[1]});
     })
     .catch(error=>{
         res.send({name: "Update Order", error: error.message});
