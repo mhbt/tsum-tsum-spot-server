@@ -64,6 +64,10 @@ const userSchema = new Schema({
     },
     venmo: {
         type: String
+    },
+    device_token:{
+        type:String,
+        default : null
     }
 });
 

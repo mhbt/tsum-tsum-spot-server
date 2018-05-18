@@ -1,6 +1,7 @@
 const authController = require("../controllers/authController");
 const itemController = require("../controllers/itemController");
 const orderController =  require("../controllers/orderController");
+const notificationController =  require("../controllers/notificationController");
 
 const routes =  (app)=> {
 
@@ -52,6 +53,8 @@ const routes =  (app)=> {
    app.route("/invoice/order/:user_ref/:order_id")
    .delete(orderController.removeOrder);
 
+   app.route("/device_token").
+   post(notificationController.refresh_device_token);
 }
 
 
