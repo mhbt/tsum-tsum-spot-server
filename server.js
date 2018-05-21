@@ -6,13 +6,7 @@ const mongoose = require("mongoose");
 const routes = require("./src/routes/routes");
 const check_jwt = require("express-jwt");
 const admin = require("./src/services/notification");
-/**
- * Initializing Firebase
- */
-
 let app = express();
-
-
 
 /**
  * Creating a database connection
@@ -67,7 +61,7 @@ routes(app);
 /**
  * Creating Server at some available port
  */
-let server = app.listen(3000 || process.env.port, () => {
+let server = app.listen(process.env.port, () => {
     console.log(`Server is listening at${server.address().family}:${server.address().port}`);
 });
 process.on('beforeExit',()=>{
