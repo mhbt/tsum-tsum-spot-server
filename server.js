@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const routes = require("./src/routes/routes");
 const check_jwt = require("express-jwt");
-const admin = require("./src/services/notification");
+// const admin = require("./src/services/notification");
 let app = express();
 
 /**

@@ -1,4 +1,4 @@
-const admin = require("../services/notification");
+// const admin = require("../services/notification");
 const mongoose = require("mongoose");
 const itemSchema = require("../modals/itemModal");
 const orderSchema = require("../modals/orderModal");
@@ -8,14 +8,14 @@ const Item = mongoose.model('Item', itemSchema);
 const Order = mongoose.model("Order", orderSchema);
 const Invoice = mongoose.model("Invoice", invoiceSchema);
 
-admin.messaging().send({  notification: {
-    title: '$GOOG up 1.43% on the day',
-    body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
-  }, data: {score: '850', time: '2:45'}, topic: 'news'});
-    admin.messaging().send({  notification: {
-    title: '$GOOG up 1.43% on the day',
-    body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
-  }, data: {score: '850', time: '2:45'}, topic: 'news'});
+// admin.messaging().send({  notification: {
+//     title: '$GOOG up 1.43% on the day',
+//     body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
+//   }, data: {score: '850', time: '2:45'}, topic: 'news'});
+//     admin.messaging().send({  notification: {
+//     title: '$GOOG up 1.43% on the day',
+//     body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
+//   }, data: {score: '850', time: '2:45'}, topic: 'news'});
 module.exports.createItem = function createItem (req,res){
     let post = req.body;
     if (!post) res.status(400).send({name: 'Create Item', error: "Item object is required"});
@@ -34,10 +34,10 @@ module.exports.createItem = function createItem (req,res){
         else {
             body = `Accepting order for ${item.name}. Price bid $${item.price} only. Buy! before the time runs out!`;
         }
-        admin.messaging().send({  notification: {
-            title: 'A new item just arrived!',
-            body: body
-          }, data: {item: item}, topic: 'newItem'});
+        // admin.messaging().send({  notification: {
+        //     title: 'A new item just arrived!',
+        //     body: body
+        //   }, data: {item: item}, topic: 'newItem'});
         res.status(201).send({name: 'Create Item', payload: item});
     })
     .catch(error=>{
@@ -56,27 +56,27 @@ module.exports.updateItem = function updateItem(req,res){
         return Item.findByIdAndUpdate(id, update, {new: true});
     })
     .then(item=>{
-        if(item.status){
-            admin.messaging().send({  notification: {
-                title: 'An item has been updated',
-                body: `${item.name} has been updated. You may have a golden chance to buy it now. Hurry!`
-              }, data: {item: item}, topic: 'updatedItem'});
-        }
-        else{
-           if(old_status !== item.status){
-            if (!item.status){
-                admin.messaging().send({  notification: {
-                    title: 'An item has been marked closed',
-                    body: `${item.name} is marked closed. No furthur order or order updates will be accepted!`
-                  }, data: {item: item}, topic: 'updatedItem'});
-               }
-            } else {
-                admin.messaging().send({  notification: {
-                    title: 'An item has been re-marked active',
-                    body: `${item.name} has been marked active again. Have a fun buying!`
-                  }, data: {item: item}, topic: 'updatedItem'});
-               }
-            }
+        // if(item.status){
+        //     admin.messaging().send({  notification: {
+        //         title: 'An item has been updated',
+        //         body: `${item.name} has been updated. You may have a golden chance to buy it now. Hurry!`
+        //       }, data: {item: item}, topic: 'updatedItem'});
+        // }
+        // else{
+        //    if(old_status !== item.status){
+        //     if (!item.status){
+        //         admin.messaging().send({  notification: {
+        //             title: 'An item has been marked closed',
+        //             body: `${item.name} is marked closed. No furthur order or order updates will be accepted!`
+        //           }, data: {item: item}, topic: 'updatedItem'});
+        //        }
+        //     } else {
+        //         admin.messaging().send({  notification: {
+        //             title: 'An item has been re-marked active',
+        //             body: `${item.name} has been marked active again. Have a fun buying!`
+        //           }, data: {item: item}, topic: 'updatedItem'});
+        //        }
+        //     }
         
         res.status(200).send({name: 'Update Item', payload: item});
     })
