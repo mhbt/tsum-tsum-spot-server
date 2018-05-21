@@ -1,27 +1,15 @@
 const conf = require("./src/conf/conf");
-const serviceAccount = require("./src/conf/serviceAccountKey.json");
-
 const debug = require("./src/debug/debug");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const routes = require("./src/routes/routes");
 const check_jwt = require("express-jwt");
-const admin = require("firebase-admin");
+const admin = require("./src/services/notification");
 /**
  * Initializing Firebase
  */
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://tsum-tsum-spot.firebaseio.com"
-  });
-  admin.messaging().send({  notification: {
-    title: '$GOOG up 1.43% on the day',
-    body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
-  }, data: {score: '850', time: '2:45'}, topic: 'news'});
-/**
- * Creating Express Application
- */
+
 let app = express();
 
 

@@ -1,4 +1,4 @@
-
+const admin = require("../services/notification");
 const mongoose = require("mongoose");
 const itemSchema = require("../modals/itemModal");
 const orderSchema = require("../modals/orderModal");
@@ -7,11 +7,37 @@ const invoiceSchema = require("../modals/invoiceModal");
 const Item = mongoose.model('Item', itemSchema);
 const Order = mongoose.model("Order", orderSchema);
 const Invoice = mongoose.model("Invoice", invoiceSchema);
+
+admin.messaging().send({  notification: {
+    title: '$GOOG up 1.43% on the day',
+    body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
+  }, data: {score: '850', time: '2:45'}, topic: 'news'});
+    admin.messaging().send({  notification: {
+    title: '$GOOG up 1.43% on the day',
+    body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.'
+  }, data: {score: '850', time: '2:45'}, topic: 'news'});
 module.exports.createItem = function createItem (req,res){
     let post = req.body;
     if (!post) res.status(400).send({name: 'Create Item', error: "Item object is required"});
     Item.create(post)
     .then(item=>{
+        let body = null;
+        if (item.availablity == "in-stock"){
+            body = `${item.name} is available for $${item.price}.`
+            if(item.stock < 10){
+                body += ` Limited stock on this item!`
+            }
+            else{
+                body += ` Be the first one to buy!`
+            }
+        }
+        else {
+            body = `Accepting order for ${item.name}. Price bid $${item.price} only. Buy! before the time runs out!`;
+        }
+        admin.messaging().send({  notification: {
+            title: 'A new item just arrived!',
+            body: body
+          }, data: {item: item}, topic: 'newItem'});
         res.status(201).send({name: 'Create Item', payload: item});
     })
     .catch(error=>{
@@ -22,12 +48,36 @@ module.exports.createItem = function createItem (req,res){
 module.exports.updateItem = function updateItem(req,res){
     let update = req.body;
     let id = req.params.id;
+    let old_status = null;
     if (!update || !id) res.status(400).send({name: 'Update Item', error: "Param missing"});
     Item.findById(req.params.id)
     .then(item=>{
+        old_status = item.status;
         return Item.findByIdAndUpdate(id, update, {new: true});
     })
     .then(item=>{
+        if(item.status){
+            admin.messaging().send({  notification: {
+                title: 'An item has been updated',
+                body: `${item.name} has been updated. You may have a golden chance to buy it now. Hurry!`
+              }, data: {item: item}, topic: 'updatedItem'});
+        }
+        else{
+           if(old_status !== item.status){
+            if (!item.status){
+                admin.messaging().send({  notification: {
+                    title: 'An item has been marked closed',
+                    body: `${item.name} is marked closed. No furthur order or order updates will be accepted!`
+                  }, data: {item: item}, topic: 'updatedItem'});
+               }
+            } else {
+                admin.messaging().send({  notification: {
+                    title: 'An item has been re-marked active',
+                    body: `${item.name} has been marked active again. Have a fun buying!`
+                  }, data: {item: item}, topic: 'updatedItem'});
+               }
+            }
+        
         res.status(200).send({name: 'Update Item', payload: item});
     })
     .catch(error=>{
